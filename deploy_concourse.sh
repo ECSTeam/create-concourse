@@ -1,43 +1,38 @@
 #!/bin/bash
+#############################################################
+#
+#  Creates a BOSH Concourse deployment integrated with Vault.
+#  This script expects the bosh director to be targeted.
+#  A "generated" directory is created under the current
+#  directory to house the creds generated during deployment.
+#
+#   Arguments:
+#       1 - Concourse Fully Qualified Domain Name / IP
+#       2 - External Concourse URL
+#       3 - Admin password
+#
+#############################################################
 
 set -e 
 set -x 
 
-CONCOURSE_FQDN=REPLACE_ME
+CONCOURSE_FQDN=$1
+CONCOURSE_EXTERNAL_URL=$2
 GENERATED_DIR=./generated
-DEPLOYMENT_NAME=concourse_ssl
+DEPLOYMENT_NAME=concourse_vault
 CONCOURSE_RELEASE=https://bosh.io/d/github.com/concourse/concourse
 GARDEN_RUNC_RELEASE=https://bosh.io/d/github.com/cloudfoundry/garden-runc-release
-STEMCELL=https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+STEMCELL=https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent
 
 mkdir -p $GENERATED_DIR
 
-bosh-v2 interpolate ./generate_certs.yml -v internal_ip=$CONCOURSE_FQDN --vars-store $GENERATED_DIR/concourse_certs.yml
+bosh2 ur $CONCOURSE_RELEASE
+bosh2 ur $GARDEN_RUNC_RELEASE
+bosh2 us $STEMCELL
+# Deploy concourse
+bosh2 -n -d concourse deploy concourse_stub.yml \
+  --vars-store=$GENERATED_DIR/vars.yml \
+  -v internal_ip=$CONCOURSE_FQDN \
+  -v external_url=$CONCOURSE_EXTERNAL_URL \
+  -v concourse_admin_password=admin
 
-cat $GENERATED_DIR/concourse_certs.yml | yaml2json | jq -r ".$DEPLOYMENT_NAME.certificate" > $GENERATED_DIR/$DEPLOYMENT_NAME.crt
-cat $GENERATED_DIR/concourse_certs.yml | yaml2json | jq -r ".$DEPLOYMENT_NAME.private_key" > $GENERATED_DIR/$DEPLOYMENT_NAME.pem
-
-CONCOURSE_SSL_CERT=`sed 's/^/        /' $GENERATED_DIR/$DEPLOYMENT_NAME.crt`
-CONCOURSE_SSL_KEY=`sed 's/^/        /' $GENERATED_DIR/$DEPLOYMENT_NAME.pem`
-
-cat <<EOF > $GENERATED_DIR/concourse_certs_stub.yml
-instance_groups:
-- name: web
-  jobs:
-  - name: atc
-    properties:
-      tls_key: |
-${CONCOURSE_SSL_KEY}
-      tls_cert: |
-${CONCOURSE_SSL_CERT}
-EOF
-
-spiff merge ./concourse_stub.yml $GENERATED_DIR/concourse_certs_stub.yml > $GENERATED_DIR/concourse.yml
-
-bosh deployment $GENERATED_DIR/concourse.yml
-bosh upload release $CONCOURSE_RELEASE
-bosh upload release $GARDEN_RUNC_RELEASE
-bosh upload stemcell $STEMCELL
-bosh -n deploy
-
-rm $GENERATED_DIR/$DEPLOYMENT_NAME.*
