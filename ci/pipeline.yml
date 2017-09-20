@@ -1,0 +1,28 @@
+resources:
+- name: create-concourse
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/ECSTeam/create-concourse
+    username: ((git-srv-user))
+    password: ((git-srv-password))
+
+jobs:
+- name: test-create-concourse
+  plan:
+  - aggregate:
+    - get: create-concourse
+      trigger: false
+  - task: create
+    file: create-concourse/ci/tasks/create-concourse-test.yml
+    params:
+      BOSH_DIRECTOR: {{bosh-director}}
+      BOSH_CA: ((bosh-ca))
+      BOSH_ADMIN_PASSWORD: ((admin-password))
+    ensure:
+      task: delete-concourse-deployment
+      file: create-concourse/ci/tasks/delete-concourse-deployment.yml
+      params:
+        BOSH_DIRECTOR: {{bosh-director}}
+        BOSH_CA: ((bosh-ca))
+        BOSH_ADMIN_PASSWORD: ((admin-password))   
