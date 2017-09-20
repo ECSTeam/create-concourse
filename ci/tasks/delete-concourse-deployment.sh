@@ -3,6 +3,9 @@
 # Deletes the concourse deployment.
 #################################################
 
+set -x
+set -e
+
 export BOSH_CLIENT=admin
 export BOSH_CLIENT_SECRET=$BOSH_ADMIN_PASSWORD
 export BOSH_ENVIRONMENT="concourse-director"
