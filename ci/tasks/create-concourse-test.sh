@@ -24,7 +24,7 @@ echo "$BOSH_CA" > boshca.pem
 # sed -e ':a' -e 'N' -e '$!ba' -e 's/N\nC/N C/g' newline.pem > topfixed.pem
 # sed -e ':a' -e 'N' -e '$!ba' -e 's/D\nC/D C/g' topfixed.pem > finalboshca.pem
 
-bosh2 alias-env $BOSH_ENVIRONMENT -e $BOSH_DIRECTOR --ca-cert finalboshca.pem
+bosh2 alias-env $BOSH_ENVIRONMENT -e $BOSH_DIRECTOR --ca-cert boshca.pem
    
 cd create-concourse
 
