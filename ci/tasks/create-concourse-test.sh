@@ -28,6 +28,6 @@ bosh2 alias-env $BOSH_ENVIRONMENT -e $BOSH_DIRECTOR --ca-cert finalboshca.pem
    
 cd create-concourse
 
-./deploy_concourse.sh 172.28.98.52 https://172.28.98.52 admin
+#./deploy_concourse.sh 172.28.98.52 https://172.28.98.52 admin
 
 fly -t concourse-test login -c https://172.28.98.52 -k -u admin -p admin
