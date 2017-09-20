@@ -1,0 +1,13 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cgicloudnative/cfjump
+
+inputs:
+  - name: create-concourse
+
+run:
+  path: create-concourse/ci/tasks/create-concourse-test.sh
