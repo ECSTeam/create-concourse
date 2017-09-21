@@ -1,4 +1,5 @@
 generated
 ./runit.sh
+./cleanup.sh
 */credentials.yml
 */config.yml
