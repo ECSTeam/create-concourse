@@ -1,0 +1,17 @@
+resources:
+- name: concourse-vault-test
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/ECSTeam/create-concourse
+    username: ((github/git-srv-user))
+    password: ((github/git-srv-password))
+
+jobs:
+- name: test-concourse-vault
+  plan:
+  - get: concourse-vault-test
+  - task: test
+    file: concourse-vault-test/ci/test-pipeline/tasks/test-concourse-vault.yml
+    params:
+      VAULT_RETRIEVED: ((test-username))

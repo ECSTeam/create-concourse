@@ -24,5 +24,15 @@ cd create-concourse
 
 ./deploy_concourse.sh 172.28.98.52 https://172.28.98.52 admin
 
+# Wait a few seconds for concourse to fully boot.
 sleep 3
 fly -t concourse-test login -c https://172.28.98.52 -k -u admin -p admin
+
+# set the test pipeline and trigger it.
+
+fly -t concourse-test set-pipeline -p test-concourse-vault-int -c ./ci/test-pipeline/pipeline.yml 
+fly -t concourse-test unpause-pipeline -p test-concourse-vault-int
+fly -t concourse-test trigger-job -j test-concourse-vault-int/test-concourse-vault -w 
+
+# Use the exit status of the last fly command. If the job succeeded, the test was a success.
+exit $?

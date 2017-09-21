@@ -3,3 +3,4 @@ generated
 ./cleanup.sh
 */credentials.yml
 */config.yml
+target-vault.sh

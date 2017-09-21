@@ -42,9 +42,9 @@ TOKEN_CREATE_JSON=`vault token-create --policy=policy-concourse -period="600h" -
 CLIENT_TOKEN=`echo $TOKEN_CREATE_JSON | jq -r .auth.client_token`
 
 # Upload the releases and stemcell needed for the deployment.
-# bosh2 ur $CONCOURSE_RELEASE
-# bosh2 ur $GARDEN_RUNC_RELEASE
-# bosh2 us $STEMCELL
+bosh2 ur $CONCOURSE_RELEASE
+bosh2 ur $GARDEN_RUNC_RELEASE
+bosh2 us $STEMCELL
 
 # Deploy concourse
 bosh2 -n -d concourse deploy concourse_stub.yml \
