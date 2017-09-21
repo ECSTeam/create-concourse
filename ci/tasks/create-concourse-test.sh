@@ -22,7 +22,12 @@ bosh2 alias-env $BOSH_ENVIRONMENT -e $BOSH_DIRECTOR --ca-cert boshca.pem
    
 cd create-concourse
 
-./deploy_concourse.sh 172.28.98.52 https://172.28.98.52 admin
+./deploy_concourse.sh \
+  172.28.98.52 \
+  https://172.28.98.52 \
+  https://172.28.98.51:8200 \
+  $VAULT_ROOT_TOKEN \
+  ./deployment_files
 
 # Wait a few seconds for concourse to fully boot.
 sleep 3
