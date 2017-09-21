@@ -12,6 +12,9 @@ set -e
 # Print commands executed.
 set -x
 
+# Vault has a self-signed cert, so skip verification
+export VAULT_SKIP_VERIFY=true
+
 export BOSH_CLIENT=admin
 export BOSH_CLIENT_SECRET=$BOSH_ADMIN_PASSWORD
 export BOSH_ENVIRONMENT="concourse-director"
