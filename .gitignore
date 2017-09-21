@@ -4,3 +4,4 @@ generated
 */credentials.yml
 */config.yml
 target-vault.sh
+*/prime-vault.sh
