@@ -42,7 +42,7 @@ fly -t concourse-test sync
 
 # set the test pipeline and trigger it.
 
-fly -t concourse-test set-pipeline -p test-concourse-vault-int -c ./ci/test-pipeline/pipeline.yml 
+fly -t concourse-test set-pipeline -n -p test-concourse-vault-int -c ./ci/test-pipeline/pipeline.yml 
 fly -t concourse-test unpause-pipeline -p test-concourse-vault-int
 fly -t concourse-test trigger-job -j test-concourse-vault-int/test-concourse-vault -w 
 
