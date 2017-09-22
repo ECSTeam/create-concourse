@@ -9,7 +9,9 @@
 #   Arguments:
 #       1 - Concourse Fully Qualified Domain Name / IP
 #       2 - External Concourse URL
-#       3 - Admin password
+#       3 - Vault Address
+#       4 - Vault root token
+#       5 - Directory to house the files related to a given deployment.
 #
 #############################################################
 
