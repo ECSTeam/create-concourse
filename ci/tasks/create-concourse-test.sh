@@ -35,6 +35,7 @@ cd create-concourse
 # Wait a few seconds for concourse to fully boot.
 sleep 3
 fly -t concourse-test login -c https://172.28.98.52 -k -u admin -p admin
+fly -t concourse-test sync
 
 # set the test pipeline and trigger it.
 
