@@ -38,7 +38,13 @@ mkdir -p $DEPLOYMENT_DIR
 # Configure Vault
 vault auth $VAULT_ROOT_TOKEN
 
+# turn off failing if command fails. /concourse may already be mounted. Not a big
+# deal if it is, we just need to make sure it exists. This command fails if it is
+# already mounted.
+set +e
 vault mount -path=/concourse -description="Secrets for concourse pipelines" generic
+set -e
+
 vault policy-write policy-concourse policy.hcl
 TOKEN_CREATE_JSON=`vault token-create --policy=policy-concourse -period="600h" -format=json`
 CLIENT_TOKEN=`echo $TOKEN_CREATE_JSON | jq -r .auth.client_token`
