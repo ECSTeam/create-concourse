@@ -20,10 +20,10 @@ jobs:
       BOSH_CA: ((bosh-ca))
       BOSH_ADMIN_PASSWORD: ((admin-password))
       VAULT_ROOT_TOKEN: ((vault-root-token))
-    # ensure:
-    #   task: delete-concourse-deployment
-    #   file: create-concourse/ci/tasks/delete-concourse-deployment.yml
-    #   params:
-    #     BOSH_DIRECTOR: {{bosh-director}}
-    #     BOSH_CA: ((bosh-ca))
-    #     BOSH_ADMIN_PASSWORD: ((admin-password))   
+    ensure:
+      task: delete-concourse-deployment
+      file: create-concourse/ci/tasks/delete-concourse-deployment.yml
+      params:
+        BOSH_DIRECTOR: {{bosh-director}}
+        BOSH_CA: ((bosh-ca))
+        BOSH_ADMIN_PASSWORD: ((admin-password))   

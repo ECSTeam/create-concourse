@@ -27,12 +27,12 @@ bosh2 alias-env $BOSH_ENVIRONMENT -e $BOSH_DIRECTOR --ca-cert boshca.pem
    
 cd create-concourse
 
-# ./deploy_concourse.sh \
-#   172.28.98.52 \
-#   https://172.28.98.52 \
-#   $VAULT_ADDR \
-#   $VAULT_ROOT_TOKEN \
-#   ./deployment_files
+./deploy_concourse.sh \
+  172.28.98.52 \
+  https://172.28.98.52 \
+  $VAULT_ADDR \
+  $VAULT_ROOT_TOKEN \
+  ./deployment_files
 
 # Add the test user to Vault. This is the user called out in the
 # test pipeline to ensure Vault integration.
