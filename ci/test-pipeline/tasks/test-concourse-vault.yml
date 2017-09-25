@@ -7,4 +7,7 @@ image_resource:
     repository: cgicloudnative/cfjump
 
 inputs:
+  - name: concourse-vault-test
+  
+run:
   path: concourse-vault-test/ci/test-pipeline/tasks/test-concourse-vault.sh

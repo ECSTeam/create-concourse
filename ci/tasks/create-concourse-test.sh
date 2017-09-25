@@ -35,7 +35,7 @@ cd create-concourse
 # Sometimes it takes a few tries until concourse is fully booted.
 set +e 
 fly -t concourse-test login -c https://172.28.98.52 -k -u admin -p admin
-while [ $? -ne 0 ]; do fly -t concourse-test login -c https://172.28.98.52 -k -u admin -p admin; done
+while [ $? -ne 0 ]; do sleep 1; fly -t concourse-test login -c https://172.28.98.52 -k -u admin -p admin; done
 set -e 
 
 fly -t concourse-test sync
