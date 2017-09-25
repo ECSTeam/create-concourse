@@ -32,6 +32,10 @@ cd create-concourse
 #   $VAULT_ROOT_TOKEN \
 #   ./deployment_files
 
+# Add the test user to Vault. This is the user called out in the
+# test pipeline to ensure Vault integration.
+vault write concourse/main/test-username value=admin
+
 # Sometimes it takes a few tries until concourse is fully booted.
 set +e 
 fly -t concourse-test login -c https://172.28.98.52 -k -u admin -p admin
