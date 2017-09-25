@@ -14,6 +14,8 @@ set -x
 
 # Vault has a self-signed cert, so skip verification
 export VAULT_SKIP_VERIFY=true
+export VAULT_ADDR=https://172.28.98.51:8200 
+
 
 export BOSH_CLIENT=admin
 export BOSH_CLIENT_SECRET=$BOSH_ADMIN_PASSWORD
@@ -28,7 +30,7 @@ cd create-concourse
 # ./deploy_concourse.sh \
 #   172.28.98.52 \
 #   https://172.28.98.52 \
-#   https://172.28.98.51:8200 \
+#   $VAULT_ADDR \
 #   $VAULT_ROOT_TOKEN \
 #   ./deployment_files
 
