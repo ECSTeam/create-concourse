@@ -1,9 +1,9 @@
 #!/bin/bash
 #############################################################
 #
-#  Creates a BOSH Concourse deployment.
+#  Creates a bosh2 Concourse deployment.
 #  Optional integrations with github for authentciation and vault.
-#  This script expects the bosh director to be targeted.
+#  This script expects the bosh2 director to be targeted.
 #
 #   Arguments:
 #       -i <ip addresss> Concourse Fully Qualified Domain Name / IP
@@ -30,7 +30,10 @@ set -e
 function usage() {
 cat <<EOF
 USAGE:
-   deploy_concourse.sh -i <ip addresss/fqdn> -u <concourse url> [-d <deployment directory>] [-n <deployment name>] [-p <concourse admin password>] [-v <vault integration true/false> -a <vault address> -r <vault root token] [-g <github integration true/false> -c <github client id> -s <github client secret> -o <github org> [-t <github team>]]
+   deploy_concourse.sh -i <ip addresss/fqdn> -u <concourse url> [-d <deployment directory>] \
+[-n <deployment name>] [-p <concourse admin password>] [-v <vault integration true/false> \
+-a <vault address> -r <vault root token] [-g <github integration true/false> \
+-c <github client id> -s <github client secret> -o <github org> [-t <github team>]]
 
 EOF
 }
@@ -58,7 +61,7 @@ MANIFEST="concourse_stub.yml"
 DEPLOYMENT_NAME="concourse"
 
 # Parse the command argument list
-while getopts "h:i:u:d:v:a:r:g:c:s:o:t:n:" opt; do
+while getopts "h:i:u:d:v:a:r:g:c:s:o:t:n:p:" opt; do
     case "$opt" in
     h|\?)
         usage
@@ -72,6 +75,9 @@ while getopts "h:i:u:d:v:a:r:g:c:s:o:t:n:" opt; do
         ;;
     d)
         DEPLOYMENT_DIR=$OPTARG
+        ;;
+    p)
+        CONCOURSE_PASSWORD=$OPTARG
         ;;
     n)
         DEPLOYMENT_NAME=$OPTARG
@@ -135,23 +141,23 @@ DEPLOY_ARGS=""
 if [ $VAULT_INTEGRATION = true ]; then
   echo "Setting up intergation with vault at $VAULT_ADDR"
   export VAULT_ADDR=$VAULT_ADDR
-  vault auth $VAULT_ROOT_TOKEN
+  #vault auth $VAULT_ROOT_TOKEN
 
   # turn off failing if command fails. /concourse may already be mounted. Not a big
   # deal if it is, we just need to make sure it exists. This command fails if it is
   # already mounted.
   set +e
-  vault mount -path=/concourse -description="Secrets for concourse pipelines" generic
+  #vault mount -path=/concourse -description="Secrets for concourse pipelines" generic
   set -e
 
-  vault policy-write policy-concourse policy.hcl
-  TOKEN_CREATE_JSON=`vault token-create --policy=policy-concourse -period="600h" -format=json`
-  CLIENT_TOKEN=`echo $TOKEN_CREATE_JSON | jq -r .auth.client_token`
+  #vault policy-write policy-concourse policy.hcl
+  #TOKEN_CREATE_JSON=`vault token-create --policy=policy-concourse -period="600h" -format=json`
+  #CLIENT_TOKEN=`echo $TOKEN_CREATE_JSON | jq -r .auth.client_token`
 
   bosh2 interpolate $MANIFEST -o operations/vault-patch.yml > $DEPLOYMENT_DIR/concourse_stub_vault.yml
   MANIFEST=$DEPLOYMENT_DIR/concourse_stub_vault.yml
 
-  DEPLOY_ARGS="$DEPLOY_ARGS -v vault-url=$VAULT_ADDR -v vault-token=$CLIENT_TOKEN"
+  DEPLOY_ARGS="$DEPLOY_ARGS -v vault-url=$VAULT_ADDR -v vault-token=$VAULT_ROOT_TOKEN"
 fi
 
 #Configure github authentication
@@ -159,7 +165,8 @@ if [ $GITHUB_INTEGRATION = true ]; then
   echo "Setting up authentication with github org $GITHUB_ORG and team $GITHUB_TEAM"
 
   bosh2 interpolate $MANIFEST -o operations/github-auth-patch.yml > $DEPLOYMENT_DIR/concourse_stub_github.yml
-  DEPLOY_ARGS="$DEPLOY_ARGS -v github_organization=$GITHUB_ORG -v github_team=$GITHUB_TEAM -v github_client_id=$GITHUB_CLIENT_ID -v github_client_secret=$GITHUB_CLIENT_SECRET"
+  DEPLOY_ARGS="$DEPLOY_ARGS -v github_organization=$GITHUB_ORG -v github_team=$GITHUB_TEAM \
+              -v github_client_id=$GITHUB_CLIENT_ID -v github_client_secret=$GITHUB_CLIENT_SECRET"
   MANIFEST="$DEPLOYMENT_DIR/concourse_stub_github.yml"
 else
   echo "Using basic authentication"
@@ -168,4 +175,6 @@ else
 fi
 
 # Deploy concourse
-bosh2 -n -d $DEPLOYMENT_NAME deploy $MANIFEST --vars-store=$DEPLOYMENT_DIR/vars.yml -v deployment_name=$DEPLOYMENT_NAME -v internal_ip=$CONCOURSE_FQDN -v external_url=$CONCOURSE_EXTERNAL_URL $DEPLOY_ARGS
+bosh2 -n -d $DEPLOYMENT_NAME deploy $MANIFEST --vars-store=$DEPLOYMENT_DIR/vars.yml \
+      -v deployment_name=$DEPLOYMENT_NAME -v internal_ip=$CONCOURSE_FQDN \
+      -v external_url=$CONCOURSE_EXTERNAL_URL $DEPLOY_ARGS
