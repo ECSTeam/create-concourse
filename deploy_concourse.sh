@@ -141,7 +141,7 @@ DEPLOY_ARGS=""
 if [ $VAULT_INTEGRATION = true ]; then
   echo "Setting up intergation with vault at $VAULT_ADDR"
   export VAULT_ADDR=$VAULT_ADDR
-  #vault auth $VAULT_ROOT_TOKEN
+  vault auth $VAULT_ROOT_TOKEN
 
   # turn off failing if command fails. /concourse may already be mounted. Not a big
   # deal if it is, we just need to make sure it exists. This command fails if it is
@@ -150,9 +150,9 @@ if [ $VAULT_INTEGRATION = true ]; then
   #vault mount -path=/concourse -description="Secrets for concourse pipelines" generic
   set -e
 
-  #vault policy-write policy-concourse policy.hcl
-  #TOKEN_CREATE_JSON=`vault token-create --policy=policy-concourse -period="600h" -format=json`
-  #CLIENT_TOKEN=`echo $TOKEN_CREATE_JSON | jq -r .auth.client_token`
+  vault policy-write policy-concourse policy.hcl
+  TOKEN_CREATE_JSON=`vault token-create --policy=policy-concourse -period="600h" -format=json`
+  CLIENT_TOKEN=`echo $TOKEN_CREATE_JSON | jq -r .auth.client_token`
 
   bosh2 interpolate $MANIFEST -o operations/vault-patch.yml > $DEPLOYMENT_DIR/concourse_stub_vault.yml
   MANIFEST=$DEPLOYMENT_DIR/concourse_stub_vault.yml
