@@ -1,6 +1,6 @@
 ---
-name: concourse
-director_uuid: REPLACE_ME 
+name: ((deployment_name))
+director_uuid: REPLACE_ME
 
 releases:
 - name: concourse
@@ -21,7 +21,7 @@ instance_groups:
   stemcell: trusty
   azs: [z1]
 
-  networks: 
+  networks:
   - name: default
     static_ips: ((internal_ip))
   jobs:
@@ -36,15 +36,9 @@ instance_groups:
       basic_auth_password: ((concourse_admin_password))
 
       # replace with your SSL cert and key
-      tls_cert: ((concourse-tls.certificate)) 
+      tls_cert: ((concourse-tls.certificate))
       tls_key: ((concourse-tls.private_key))
       tls_bind_port: 443
-
-      vault:
-        path_prefix: /concourse
-        url: ((vault-url)) # e.g. http://192.168.10.15:8200
-        auth:
-          client_token: ((vault-token))
 
       postgresql_database: &atc_db atc
   - name: tsa
