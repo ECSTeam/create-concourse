@@ -10,7 +10,7 @@
 #       -u <url> External Concourse URL
 #
 #   Optional Arguments:
-#       -d <directory> Directory to house the files related to a given deployment.
+#       -d <directory> Directory to house the files related to a given deployment, will default to "deployment"
 #       -p <password> basic auth password, will default to "admin" if not specified
 #       -n <name> deployment name, will default to "concourse"
 #
@@ -168,4 +168,4 @@ else
 fi
 
 # Deploy concourse
-echo "bosh2 -n -d $DEPLOYMENT_NAME deploy $MANIFEST --vars-store=$DEPLOYMENT_DIR/vars.yml -v deployment_name=$DEPLOYMENT_NAME -v internal_ip=$CONCOURSE_FQDN -v external_url=$CONCOURSE_EXTERNAL_URL $DEPLOY_ARGS"
+bosh2 -n -d $DEPLOYMENT_NAME deploy $MANIFEST --vars-store=$DEPLOYMENT_DIR/vars.yml -v deployment_name=$DEPLOYMENT_NAME -v internal_ip=$CONCOURSE_FQDN -v external_url=$CONCOURSE_EXTERNAL_URL $DEPLOY_ARGS
