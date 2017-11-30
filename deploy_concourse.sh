@@ -147,7 +147,7 @@ if [ $VAULT_INTEGRATION = true ]; then
   # deal if it is, we just need to make sure it exists. This command fails if it is
   # already mounted.
   set +e
-  #vault mount -path=/concourse -description="Secrets for concourse pipelines" generic
+  vault mount -path=/concourse -description="Secrets for concourse pipelines" generic
   set -e
 
   vault policy-write policy-concourse policy.hcl
