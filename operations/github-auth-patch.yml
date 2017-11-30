@@ -2,7 +2,7 @@
   path: /instance_groups/name=web/jobs/name=atc/properties/github_auth?
   value:
     authorize:
-      - organization: ((github_organization))
+      - organization: ((github_organization)
         teams:
         - ((github_team))
     client_id: ((github_client_id))
