@@ -4,8 +4,8 @@ resources:
   source:
     branch: master
     uri: https://github.com/ECSTeam/create-concourse
-    username: ((git-srv-user))
-    password: ((git-srv-password))
+    username: ((git-svc-user))
+    password: ((git-svc-password))
 
 jobs:
 - name: test-create-concourse
