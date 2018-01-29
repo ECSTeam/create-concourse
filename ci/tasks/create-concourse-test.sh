@@ -30,10 +30,16 @@ cd create-concourse
 ./deploy_concourse.sh \
   -i 172.28.98.52 \
   -u https://172.28.98.52 \
+  -v true \
   -a $VAULT_ADDR \
   -r $VAULT_ROOT_TOKEN \
-  -v true \
+  -g true \
+  -c $GIT_CLIENT_ID \
+  -s $GIT_CLIENT_SECRET \
+  -o ECSTeam \
   ./deployment_files
+
+
 
 # Add the test user to Vault. This is the user called out in the
 # test pipeline to ensure Vault integration.

@@ -77,7 +77,7 @@ GITHUB_ORG=""
 GITHUB_TEAM="all" #default to all
 
 MANIFEST="concourse_stub.yml"
-DEPLOYMENT_NAME="concourse"
+DEPLOYMENT_NAME="concourse-gold"
 IAAS=vsphere
 
 # Parse the command argument list
@@ -187,20 +187,10 @@ for arg in $*; do
       GITHUB_ORG=${!m}
    elif [[ $arg == "-t" ]]; then
       GITHUB_TEAM=${!m}
-   elif [[ $arg == "--tsa-signing-key" ]]; then
-      TSA_SIGNING_KEY=${!m}
    elif [[ $arg == "--iaas" ]]; then
       IAAS=${!m}
    elif [[ $arg == "--manifest" ]]; then
       MANIFEST=${!m}
-   elif [[ $arg == "--host-private-key" ]]; then
-      HOST_PRIVATE_KEY=${!m}
-   elif [[ $arg == "--host-public-key" ]]; then
-      HOST_PUBLIC_KEY=${!m}
-   elif [[ $arg == "--worker-private-key" ]]; then
-      WORKER_PRIVATE_KEY=${!m}
-   elif [[ $arg == "--worker-public-key" ]]; then
-      WORKER_PUBLIC_KEY=${!m}
    elif [[ $arg == "--web-public-ip" ]]; then
       WEB_PUBLIC_IP=${!m}
    fi
@@ -273,11 +263,13 @@ else
 fi
 echo "manifest = $MANIFEST"
 # Deploy concourse
-bosh2 -n -d $DEPLOYMENT_NAME deploy $MANIFEST --vars-store=$DEPLOYMENT_DIR/vars.yml \
+if [ $IAAS == "vsphere" ]; then
+   bosh2 -n -d $DEPLOYMENT_NAME deploy $MANIFEST --vars-store=$DEPLOYMENT_DIR/vars.yml \
       -v deployment_name=$DEPLOYMENT_NAME -v internal_ip=$CONCOURSE_FQDN \
-      -v external_url=$CONCOURSE_EXTERNAL_URL $DEPLOY_ARGS --var-file token_signing_key=$TSA_SIGNING_KEY \
-      --var-file host_private_key=$HOST_PRIVATE_KEY \
-      --var-file host_public_key=$HOST_PUBLIC_KEY \
-      --var-file worker_private_key=$WORKER_PRIVATE_KEY \
-      --var-file worker_public_key=$WORKER_PUBLIC_KEY \
+      -v external_url=$CONCOURSE_EXTERNAL_URL $DEPLOY_ARGS
+elif [ $IAAS == "aws" ]; then
+   bosh2 -n -d $DEPLOYMENT_NAME deploy $MANIFEST --vars-store=$DEPLOYMENT_DIR/vars.yml \
+      -v deployment_name=$DEPLOYMENT_NAME -v internal_ip=$CONCOURSE_FQDN \
+      -v external_url=$CONCOURSE_EXTERNAL_URL $DEPLOY_ARGS \
       -v web_public_ip=$WEB_PUBLIC_IP
+fi
