@@ -30,6 +30,7 @@
 #       -v <vault integration> true/false defaults to false
 #       -a <address> Vault Address
 #       -r <token> Vault root token
+#       --vault-insecure-skip-verify = true/false
 #
 #       -g <github integration> true/false, defaults to false
 #       -c <client_id> github client id
@@ -79,6 +80,7 @@ GITHUB_TEAM="all" #default to all
 MANIFEST="concourse_stub.yml"
 DEPLOYMENT_NAME="concourse-gold"
 IAAS=vsphere
+VAULT_INSECURE_SKIP_VERIFY=true
 
 # Parse the command argument list
 # while getopts "h:i:u:d:v:a:r:g:c:s:o:t:n:p:" opt; do
@@ -193,6 +195,13 @@ for arg in $*; do
       MANIFEST=${!m}
    elif [[ $arg == "--web-public-ip" ]]; then
       WEB_PUBLIC_IP=${!m}
+   elif [[ $arg == "--vault-insecure-skip-verify" ]]; then
+      if [ ${!m} = true ] || [ ${!m} = false ]; then
+         VAULT_INSECURE_SKIP_VERIFY=${!m}
+      else
+         echo "Unknown value for -v: ${!m}.  Options are true/false"
+         exit 1
+      fi
    fi
 done
 # if web-public-ip is not provided, parse it from "-u"
@@ -204,9 +213,9 @@ if [ ! -z $WEB_PUBLIC_IP ]; then
 fi
 
 
-CONCOURSE_RELEASE=https://bosh.io/d/github.com/concourse/concourse
-GARDEN_RUNC_RELEASE=https://bosh.io/d/github.com/cloudfoundry/garden-runc-release
-POSTGRES_RELEASE=http://bosh.io/d/github.com/cloudfoundry/postgres-release
+#CONCOURSE_RELEASE=https://bosh.io/d/github.com/concourse/concourse
+#GARDEN_RUNC_RELEASE=https://bosh.io/d/github.com/cloudfoundry/garden-runc-release
+#POSTGRES_RELEASE=http://bosh.io/d/github.com/cloudfoundry/postgres-release
 if [ $IAAS == "vsphere" ]; then
    STEMCELL=https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent
 elif [ $IAAS == "aws" ]; then
@@ -219,9 +228,9 @@ fi
 mkdir -p $DEPLOYMENT_DIR
 # Upload the releases and stemcell needed for the deployment.
 echo $STEMCELL
-bosh2 ur $CONCOURSE_RELEASE
-bosh2 ur $POSTGRES_RELEASE
-bosh2 ur $GARDEN_RUNC_RELEASE
+#bosh2 ur $CONCOURSE_RELEASE
+#bosh2 ur $POSTGRES_RELEASE
+#bosh2 ur $GARDEN_RUNC_RELEASE
 bosh2 us $STEMCELL
 DEPLOY_ARGS=""
 
@@ -245,7 +254,7 @@ if [ $VAULT_INTEGRATION = true ]; then
   bosh2 interpolate $MANIFEST -o operations/vault-patch.yml > $DEPLOYMENT_DIR/concourse_stub_vault.yml
   MANIFEST=$DEPLOYMENT_DIR/concourse_stub_vault.yml
 
-  DEPLOY_ARGS="$DEPLOY_ARGS -v vault-url=$VAULT_ADDR -v vault-token=$VAULT_ROOT_TOKEN"
+  DEPLOY_ARGS="$DEPLOY_ARGS -v vault-url=$VAULT_ADDR -v vault-token=$VAULT_ROOT_TOKEN -v insecure_skip_verify=$VAULT_INSECURE_SKIP_VERIFY"
 fi
 
 #Configure github authentication
