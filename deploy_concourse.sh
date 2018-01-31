@@ -228,9 +228,9 @@ fi
 mkdir -p $DEPLOYMENT_DIR
 # Upload the releases and stemcell needed for the deployment.
 echo $STEMCELL
-#bosh2 ur $CONCOURSE_RELEASE
-#bosh2 ur $POSTGRES_RELEASE
-#bosh2 ur $GARDEN_RUNC_RELEASE
+bosh2 ur $CONCOURSE_RELEASE
+bosh2 ur $POSTGRES_RELEASE
+bosh2 ur $GARDEN_RUNC_RELEASE
 bosh2 us $STEMCELL
 DEPLOY_ARGS=""
 
@@ -238,6 +238,7 @@ DEPLOY_ARGS=""
 if [ $VAULT_INTEGRATION = true ]; then
   echo "Setting up intergation with vault at $VAULT_ADDR"
   export VAULT_ADDR=$VAULT_ADDR
+  export VAULT_SKIP_VERIFY=$VAULT_INSECURE_SKIP_VERIFY
   vault auth $VAULT_ROOT_TOKEN
 
   # turn off failing if command fails. /concourse may already be mounted. Not a big

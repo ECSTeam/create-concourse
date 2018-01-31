@@ -3,8 +3,7 @@
   value:
     authorize:
       - organization: ((github_organization))
-        teams:
-        - ((github_team))
+        teams: all
     client_id: ((github_client_id))
     client_secret: ((github_client_secret))
 - type: remove
