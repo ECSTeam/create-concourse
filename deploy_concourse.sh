@@ -148,7 +148,8 @@ VAULT_INSECURE_SKIP_VERIFY=true
 
 n=0;
 for arg in $*; do
-   (( n++ ))
+#   (( n++ ))
+   let n=n+1
    m=$(( n+1 ))
    if [[ $arg == "-h" ]]; then
       usage
@@ -228,9 +229,9 @@ fi
 mkdir -p $DEPLOYMENT_DIR
 # Upload the releases and stemcell needed for the deployment.
 echo $STEMCELL
-bosh2 ur $CONCOURSE_RELEASE
-bosh2 ur $POSTGRES_RELEASE
-bosh2 ur $GARDEN_RUNC_RELEASE
+#bosh2 ur $CONCOURSE_RELEASE
+#bosh2 ur $POSTGRES_RELEASE
+#bosh2 ur $GARDEN_RUNC_RELEASE
 bosh2 us $STEMCELL
 DEPLOY_ARGS=""
 
