@@ -70,7 +70,7 @@ VAULT_INTEGRATION=false
 VAULT_ADDR=""
 VAULT_ROOT_TOKEN=""
 
-#github integariton
+#github integration
 GITHUB_INTEGRATION=false
 GITHUB_CLIENT_ID=""
 GITHUB_CLIENT_SECRET=""
@@ -223,7 +223,7 @@ elif [ $IAAS == "aws" ]; then
    STEMCELL=https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent
 elif [ $IAAS == "azure" ]; then
    STEMCELL=https://bosh.io/d/stemcells/bosh-azure-hyperv-ubuntu-trusty-go_agent
-elif [ $IAAS == "azure" ]; then
+elif [ $IAAS == "google" ]; then
    STEMCELL=https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent
 fi
 mkdir -p $DEPLOYMENT_DIR
